@@ -1,0 +1,93 @@
+----------------
+SUBDOMAINS
+----------------
+
+(([0-9a-z_\\-\\.]+)\\.10degres\\.net)
+
+
+----------------
+ENDPOINTS
+----------------
+
+{
+"*1":"[\"]([a-zA-Z0-9\\-\\.\\?\\#&=_:/]+/[a-zA-Z0-9\\-\\.\\?\\#&=_:/]+)?[\"]",
+"*2":"['\"\\(].*(http[s]?://.*?)['\"\\)]",
+"*3":"['\"\\(](http[s]?://.*?).*['\"\\)]",
+"*4":"['\"\\(]([^'\"\\(]*\\.sdirect[^'\"\\(]*?)['\"\\)]",
+"*5":"['\"\\(]([^'\"\\(]*\\.htm[^'\"\\(]*?)['\"\\)]",
+"*6":"['\"\\(]([^'\"\\(]*\\.html[^'\"\\(]*?)['\"\\)]",
+"*7":"['\"\\(]([^'\"\\(]*\\.php[^'\"\\(]*?)['\"\\)]",
+"*8":"['\"\\(]([^'\"\\(]*\\.asp[^'\"\\(]*?)['\"\\)]",
+"*9":"['\"\\(]([^'\"\\(]*\\.aspx[^'\"\\(]*?)['\"\\)]",
+"*10":"href\\s*=\\s*['](.*?)[']",
+"*11":"href\\s*=\\s*[\"](.*?)[\"]",
+"*12":"src\\s*=\\s*['](.*?)[']",
+"*13":"src\\s*=\\s*[\"](.*?)[\"]",
+"*14":"url\\s*[:=].*['](.*?)[']",
+"*15":"url\\s*[:=].*?[\"](.*?)[\"]",
+"*16":"urlRoot\\s*:.*['](.*?)[']",
+"*17":"urlRoot\\s*:.*?[\"](.*?)[\"]",
+"*18":"endpoint[s]?\\s*:.*['](.*?)[']",
+"*19":"endpoint[s]?\\s*:.*?[\"](.*?)[\"]",
+"*20":"['\"]script['\"]\\s*:\\s*['\"](.*?)['\"]",
+"*21":"\\.ajax\\s*\\(\\s*['\"](.*?)['\"]",
+"*22":"\\.get\\s*\\(\\s*['\"](.*?)['\"]",
+"*23":"\\.post\\s*\\(\\s*['\"](.*?)['\"]",
+"*24":"\\.load\\s*\\(\\s*['\"](.*?)['\"]"
+}
+
+[
+"http://$",
+"https://$",
+"image/png$",
+"application/javascript",
+"application/json",
+"googleapis.com",
+"fontawesome.com",
+"cloudflare.com",
+"google-analytics.com",
+"sha256.*$",
+"github.com",
+"docs.aws.amazon.com"
+]
+
+
+----------------
+KEYS
+----------------
+
+"s3 bucket": "([a-z0-9\\._-]*s3[a-z0-9\\.-]*\\.amazonaws\\.com[\\\\]?/?([a-z0-9\\._-]+)?)",
+"slack token": "(xox[pboa]-[0-9]{10,12}-[0-9]{10,12}(-[0-9]{10,12})?-[a-zA-Z0-9]{24,32})",
+"???": "(T[a-zA-Z0-9_]{8}[\\\\]?/B[a-zA-Z0-9_]{8}[\\\\]?/[a-zA-Z0-9_]{24})",
+"aws key": "((AKIA|A3T|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{12,})",
+"stripe key": "([psr]k_live_[0-9a-zA-Z]{24,34})",
+"twilio api key": "((AC|SK)[0-9a-f]{32})",
+"google key": "(AIza[0-9A-Za-z_-]{35})",
+"google url": "([0-9]+-[0-9A-Za-z_]{32}\\.apps\\.googleusercontent\\.com)",
+"google secret": "(([gG][oO][oO][gG][lL][eE]).{0,20}[ '\"=:\\(\\[{]+.{0,5}[0-9a-zA-Z_-]{24})",
+"sendgrid api key": "(SG\\.[a-zA-Z0-9_-]{22}\\.[a-zA-Z0-9_-]{43})",
+"mailchimp key": "([0-9a-f]{32}-us[0-9]{1,2})",
+"mailgun key": "(key-[0-9a-zA-Z]{32})",
+"square app scret": "(sq0(atp|csp)-[0-9A-Za-z_-]{22,43})",
+"square personal token": "(EAAA[0-9a-zA-Z_-]{60})",
+"paypal token": "(access_token\\$(live|production|sandbox)\\$[0-9a-z]{16}\\$[0-9a-f]{32})",
+"???": "([^0-9a-zA-Z_-][AE][0-9a-zA-Z_-]{79})",
+"???": "(A21AA[0-9a-zA-Z_-]{92})",
+"facebook secret": "(([fF][aA][cC][eE][bB][oO][oO][kK]).{0,20}[ '\"=:\\(\\[{]+.{0,5}[0-9a-f]{32})",
+"???": "(EAACEdEose0cBA[0-9A-Za-z]+)",
+"???": "([0-9]{10,20}\\|[a-zA-Z0-9-]{20,30})",
+"twitter secret": "(([tT][wW][iI][tT][tT][eE][rR]).{0,20}[ '\"=:\\(\\[{]+.{0,5}[0-9a-zA-Z]{35,44})",
+"twitter secret": "(([tT][wW][iI][tT][tT][eE][rR]).{0,20}[ '\"=:\\(\\[{]+.{0,5}[1-9][0-9]+-[0-9a-zA-Z]{24,40})",
+"???": "(AAAAAAAAAAAAAAAAAAAAA[0-9A-Za-z%=\\+]+)",
+"github token": "(ghp_[a-zA-Z0-9]{36})",
+"github secret": "(([gG][iI][tT][hH][uU][bB]).{0,20}[ '\"=:\\(\\[{]+.{0,5}[0-9a-zA-Z]{35,40})",
+"heroku secret": "(([hH][eE][rR][oO][kK][uU]).{0,20}[ '\"=:\\(\\[{]+.{0,5}[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12})",
+"???": "([a-z\\+]{3,}:[/]{1,3}[^:'\" ]{2,}:[^@'\" ]{3,}@[^'\" ]+)",
+"google oauth access token": "(ya29\\.[0-9A-Za-z_-]+)",
+"???": "(amzn\\.mws\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})",
+"subdomain takeover": "([a-zA-Z0-9_-]+\\.(firebaseio|azurewebsites|cloudapp|trafficmanager|herokuapp|cloudfront)\\.(com|net))",
+"public/private key": "(\\-\\-\\-\\-\\-BEGIN[ ]+[A-Z]*[ ]*PRIVATE[ ]+KEY)",
+"json web token": "(ey[A-Za-z0-9_=-]+\\.ey[A-Za-z0-9_=-]+\\.?[A-Za-z0-9_\\.+/=-]*)",
+"whatever secret": "((access_key|access_secret|accesstoken|access_token|access-token|access_token_secret|\\.amazonaws\\.com|apikey|api_key|api-key|api_secret_key|api_token|app_key|auth|authkey|authorization|authorization_key|authorization_token|authtoken|auth_token|aws_access_key_id|aws_secret_access_key|azurewebsites|bearer|BEGIN EC PRIVATE KEY|BEGIN PGP PRIVATE KEY BLOCK|BEGIN PRIVATE KEY|BEGIN RSA PRIVATE KEY|bot_access_token|bucket|client_id|client_key|clientsecret|client_secret|client-secret|cloudapp|cloudfront|ConsumerKey|consumer_key|ConsumerSecret|consumer_secret|customer_secret|dbpasswd|DB_PASSWORD|DB_USERNAME|encryptionkey|encryption_key|encryption-key|fb_secret|firebaseio|gsecr|HEROKU_API_KEY|herokuapp|HOMEBREW_GITHUB_API_TOKEN|id_dsa|id_rsa|irc_pass|JEKYLL_GITHUB_TOKEN|key|npm_token|oauth_token|pass|password|perm|private|privatekey|secret|private_key|private-key|PT_TOKEN|rk_live_|secretkey|secret_key|secret-key|secret_token|session_key|session_secret|SESSION_TOKEN|SF_USERNAME|sk_live_|slack_api_token|SLACK_BOT_TOKEN|slack_secret_token|slack_token|sq0atp|sq0csp|sshkey|ssh_key|ssh-key|token|trafficmanager|username|user_secret|xoxa-2|xoxb-|xoxr)[a-zA-Z0-9_\\-\\.]{0,20}['\\\"]?\\s*[,:=\\[\\({]+)"
+
+
