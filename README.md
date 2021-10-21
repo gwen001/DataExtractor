@@ -16,10 +16,10 @@ A simple Burp Suite extension to extract datas from source code.
 
 First of all, ensure you have JPython loaded and setup before installing.
 
-- Clone this repository  
-- In the Extender tab, click the button "Add"  
-- Set "Extension type" to "Python"  
-- Browse to the cloned folder and select `DataExtractor.py` as the "Extension file"  
+- clone this repository  
+- in the Extender tab, click the button "Add"  
+- set "Extension type" to "Python"  
+- browse to the cloned folder and select `DataExtractor.py` as the "Extension file"  
 
 The extension should load and is now ready to perform a passive scan.
 
