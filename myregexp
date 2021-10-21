@@ -2,8 +2,9 @@
 SUBDOMAINS
 ----------------
 
-(([0-9a-z_\\-\\.]+)\\.10degres\\.net)
-
+{
+"?aaa":"(([0-9a-z_\\-\\.]+)\\.10degres\\.net)",
+}
 
 ----------------
 ENDPOINTS
@@ -55,6 +56,7 @@ ENDPOINTS
 KEYS
 ----------------
 
+{
 "s3 bucket": "([a-z0-9\\._-]*s3[a-z0-9\\.-]*\\.amazonaws\\.com[\\\\]?/?([a-z0-9\\._-]+)?)",
 "slack token": "(xox[pboa]-[0-9]{10,12}-[0-9]{10,12}(-[0-9]{10,12})?-[a-zA-Z0-9]{24,32})",
 "???": "(T[a-zA-Z0-9_]{8}[\\\\]?/B[a-zA-Z0-9_]{8}[\\\\]?/[a-zA-Z0-9_]{24})",
@@ -88,5 +90,5 @@ KEYS
 "public/private key": "(\\-\\-\\-\\-\\-BEGIN[ ]+[A-Z]*[ ]*PRIVATE[ ]+KEY)",
 "json web token": "(ey[A-Za-z0-9_=-]+\\.ey[A-Za-z0-9_=-]+\\.?[A-Za-z0-9_\\.+/=-]*)",
 "whatever secret": "((access_key|access_secret|accesstoken|access_token|access-token|access_token_secret|\\.amazonaws\\.com|apikey|api_key|api-key|api_secret_key|api_token|app_key|auth|authkey|authorization|authorization_key|authorization_token|authtoken|auth_token|aws_access_key_id|aws_secret_access_key|azurewebsites|bearer|BEGIN EC PRIVATE KEY|BEGIN PGP PRIVATE KEY BLOCK|BEGIN PRIVATE KEY|BEGIN RSA PRIVATE KEY|bot_access_token|bucket|client_id|client_key|clientsecret|client_secret|client-secret|cloudapp|cloudfront|ConsumerKey|consumer_key|ConsumerSecret|consumer_secret|customer_secret|dbpasswd|DB_PASSWORD|DB_USERNAME|encryptionkey|encryption_key|encryption-key|fb_secret|firebaseio|gsecr|HEROKU_API_KEY|herokuapp|HOMEBREW_GITHUB_API_TOKEN|id_dsa|id_rsa|irc_pass|JEKYLL_GITHUB_TOKEN|key|npm_token|oauth_token|pass|password|perm|private|privatekey|secret|private_key|private-key|PT_TOKEN|rk_live_|secretkey|secret_key|secret-key|secret_token|session_key|session_secret|SESSION_TOKEN|SF_USERNAME|sk_live_|slack_api_token|SLACK_BOT_TOKEN|slack_secret_token|slack_token|sq0atp|sq0csp|sshkey|ssh_key|ssh-key|token|trafficmanager|username|user_secret|xoxa-2|xoxb-|xoxr)[a-zA-Z0-9_\\-\\.]{0,20}['\\\"]?\\s*[,:=\\[\\({]+)"
-
+}
 
