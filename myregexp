@@ -47,7 +47,6 @@ ENDPOINTS
 "cloudflare.com",
 "google-analytics.com",
 "sha256.*$",
-"github.com",
 "docs.aws.amazon.com"
 ]
 

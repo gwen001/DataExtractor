@@ -583,7 +583,6 @@ class Extractor():
         self.extender.saveSettings(event)
 
     def clearDatas(self, event):
-        # return None
         self.datasTextArea.setText("")
 
     def exportDatas(self, event):
@@ -597,6 +596,7 @@ class Extractor():
         t_results = []
         t_filtered = []
         t_nodups = []
+        t_output = []
         t_final = []
         t_keepkeys = {}
         encoded_resp = binascii.b2a_base64(ihrr.getResponse())
@@ -606,12 +606,12 @@ class Extractor():
 
         for k,regexp in self.__config.items():
             # print(regexp)
-            # r = re.search(regexp,decoded_resp)
             for m in re.finditer(regexp,decoded_resp):
                 # print(m.group(1))
-                t_results.append( m.group(1) )
-                if not k.startswith("*") and not k.startswith("?"):
-                    t_keepkeys[m.group(1)] = k
+                if not m.group(1) is None:
+                    t_results.append( m.group(1) )
+                    if not k.startswith("*") and not k.startswith("?"):
+                        t_keepkeys[m.group(1)] = k
 
         print(self.name+": "+str(len(t_results))+" results.")
 
@@ -626,111 +626,33 @@ class Extractor():
         print(self.name+": "+str(len(t_filtered))+" filtered ("+str(len(t_results)-len(t_filtered))+" removed).")
 
         if len(t_filtered):
+            for r in t_filtered:
+                output = ""
+                if r in t_keepkeys:
+                    output = t_keepkeys[r] + ": "
+                output = output + r
+                t_output.append( output )
+
+        if len(t_output):
             if self.extender._settings["removeDuplicates"]:
                 t_currentdatas = self.datasTextArea.text.split("\n")
 
-                for r in t_filtered:
+                for r in t_output:
                     if not r in t_currentdatas and not r in t_nodups:
                         t_nodups.append( r )
 
-                print(self.name+": "+str(len(t_nodups))+" undups ("+str(len(t_filtered)-len(t_nodups))+" removed).")
+                print(self.name+": "+str(len(t_nodups))+" undups ("+str(len(t_output)-len(t_nodups))+" removed).")
                 t_final = t_nodups
             else:
-                t_final = t_filtered
+                t_final = t_output
+
+        print(self.name+": "+str(len(t_final))+" final.")
 
         if len(t_final):
             for r in t_final:
-                o = ""
-                if r in t_keepkeys:
-                    o = t_keepkeys[r] + ": "
-                o = o + r + "\n"
-                self.datasTextArea.append( o )
+                self.datasTextArea.append( r+"\n" )
 
         return len(t_final)
-
-        # print(self.name+": "+str(url))
-
-        # t_results = []
-        # # url = self.reqres.getUrl()
-        # encoded_resp = binascii.b2a_base64(self.reqres.getResponse())
-        # decoded_resp = base64.b64decode(encoded_resp)
-
-        # for r in RegexpList:
-        #     endpoints = self.parser_file(decoded_resp, r)
-        #     for e in endpoints:
-        #        t_results.append(e)
-
-        # return t_results
-
-
-        # linkA = linkAnalyse(ihrr,self._helpers)
-
-        # if any(x in stringURL for x in JSExclusionList):
-        #     print("[-] URL excluded " + str(requestURL))
-        # else:
-        #     self.datasTextArea.append(stringURL+"\n")
-        #     issueText = linkA.analyseURL()
-        #     for counter, issueText in enumerate(issueText):
-        #         if issueText['link'] is not None:
-        #             self.datasTextArea.append(issueText['link']+"\n")
-        #     return None
-
-
-
-# class linkAnalyse():
-#     def __init__(self, reqres, helpers):
-#         self._helpers = helpers
-#         self.reqres = reqres
-
-#     def analyseURL(self):
-#         mime_type = self._helpers.analyzeResponse(self.reqres.getResponse()).getStatedMimeType()
-#         # print(str(mime_type))
-
-#         # if mime_type.lower() == 'script':
-#         for t in MimeTypeExclusionList:
-#             if t == mime_type.lower():
-#                 print("skipping mime type "+t+" -> "+str(mime_type))
-#                 return []
-
-#         print("analyzing... "+str(mime_type))
-#         t_endpoints = []
-#         url = self.reqres.getUrl()
-#         encoded_resp = binascii.b2a_base64(self.reqres.getResponse())
-#         decoded_resp = base64.b64decode(encoded_resp)
-
-#         for r in RegexpList:
-#             endpoints = self.parser_file(decoded_resp, r)
-#             for e in endpoints:
-#                t_endpoints.append(e)
-
-#         return t_endpoints
-
-#     def	parser_file(self, content, regex_str, mode=1, more_regex=None, no_dup=1):
-#         regex = re.compile(regex_str, re.VERBOSE)
-#         items = [{"link": m.group(1)} for m in re.finditer(regex, content)]
-
-#         if no_dup:
-#             # Remove duplication
-#             all_links = set()
-#             no_dup_items = []
-#             for item in items:
-#                 if item["link"] not in all_links:
-#                     all_links.add(item["link"])
-#                     no_dup_items.append(item)
-#             items = no_dup_items
-
-#         # Match Regex
-#         filtered_items = []
-
-#         for item in items:
-#             # Remove other capture groups from regex results
-#             if more_regex:
-#                 if re.search(more_regex, item["link"]):
-#                     filtered_items.append(item)
-#             else:
-#                 filtered_items.append(item)
-
-#         return filtered_items
 
 
 if __name__ in ('__main__', 'main'):
