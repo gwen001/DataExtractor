@@ -64,10 +64,12 @@ Subdomains:
 ```
 
 AWS keys ans Slack tokens
+```
 {
 "slack token": "(xox[pboa]-[0-9]{10,12}-[0-9]{10,12}(-[0-9]{10,12})?-[a-zA-Z0-9]{24,32})",
 "aws key": "((AKIA|A3T|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{12,})" // <- no comma here
 }
+```
 
 See the file `myregexp` to get all my regexps.
 
