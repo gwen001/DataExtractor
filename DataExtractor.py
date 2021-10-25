@@ -48,15 +48,19 @@ remove duplicates from datas tabs
 do not parse urls with those extensions
 
 - Settings / Ignore files:
-do not parse those files (regexp allowed), JSON format: ["jquery.min.js",".png",...]
+do not parse those files (regexps allowed), JSON format: ["jquery.min.js",".png",...]
+important: regexps here are case insentitive by design
 
 - Custom tab / Config:
-list of regexp to search, JSON format: {"key1":"regexp1","?key2":"regexp2",...}
+list of regexps to search, JSON format: {"key1":"regexp1","?key2":"regexp2",...}
 if the first character of the key is a '?'or a '*', the key will not be printed in the datas tab
-important: you should have at least 1 group configured (using parenthesis "()") to be able to catch something
+important: regexps here are NOT case sentitive, use "(?i)" as a prefix of the whole regexp to make it insentitive
+important: you should have at least 1 group configured using parenthesis "()" to be able to catch something,
+group(1) is used as a result so to ignore a group, please use "?:" as a prefix of the group itself
 
 - Custom tab / Remove from results:
-remove those results from datas tab (regexp allowed), JSON format: ["http://$","application/javacript",...]
+remove those results from datas tab (regexps allowed), JSON format: ["http://$","application/javacript",...]
+important: regexps here are case insentitive by design
 """
 
 EXTENSION_ABOUT = """Created by Gwendal Le Coguic
@@ -207,11 +211,11 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
         self.helpTextArea.setFont(Font("Consolas", Font.PLAIN, 12))
 
         self.helpPane = JScrollPane(self.helpTextArea)
-        self.helpPane.setBounds(10, 50, 650, 350)
+        self.helpPane.setBounds(10, 50, 650, 400)
         self.helpAboutPane.add( self.helpPane )
 
         aboutLabel = JLabel("About:")
-        aboutLabel.setBounds(10, 450, 500, 30)
+        aboutLabel.setBounds(10, 480, 500, 30)
         aboutLabel.setFont(Font("Tahoma", Font.BOLD, 14))
         aboutLabel.setForeground(Color(255,102,52))
         self.helpAboutPane.add( aboutLabel )
@@ -221,7 +225,7 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
         self.aboutTextArea.setFont(Font("Consolas", Font.PLAIN, 12))
 
         self.aboutPane = JScrollPane(self.aboutTextArea)
-        self.aboutPane.setBounds(10, 490, 650, 150)
+        self.aboutPane.setBounds(10, 520, 650, 150)
         self.helpAboutPane.add( self.aboutPane )
 
         self.wholeShitPane.setLeftComponent(self.settingsPane)
@@ -476,7 +480,8 @@ class Extractor():
                 self._config = j
                 self.__config = {}
                 for k,r in self._config.items():
-                    self.__config[k] = re.compile(r,re.IGNORECASE)
+                    # self.__config[k] = re.compile(r,re.IGNORECASE)
+                    self.__config[k] = re.compile(r)
             except ValueError as e:
                 print("Invalid JSON format! ("+self.name+":config)")
 
@@ -645,7 +650,8 @@ class Extractor():
                 j = json.loads(self.configTextArea.text)
                 self._config = j
                 for k,r in self._config.items():
-                    self.__config[k] = re.compile(r,re.IGNORECASE)
+                    # self.__config[k] = re.compile(r,re.IGNORECASE)
+                    self.__config[k] = re.compile(r)
             except ValueError as e:
                 print("Invalid JSON format! ("+self.name+":config)")
 
@@ -698,6 +704,9 @@ class Extractor():
             # print(regexp)
             for m in re.finditer(regexp,decoded_resp):
                 # print(m.group(1))
+                for i in range(0,len(m.groups())+1):
+                    if not m.group(i) is None:
+                        print(str(i)+":"+m.group(i))
                 if len(m.groups()) > 0 and not m.group(1) is None:
                     t_results.append( m.group(1) )
                     if not k.startswith("*") and not k.startswith("?"):
