@@ -55,6 +55,8 @@ ENDPOINTS V2 CI
 "*21":"(?i)\\.(?:ajax|get|post|load)\\s*\\(\\s*['\"](.*?)['\"]"
 }
 
+ignore:
+
 [
 "http://$",
 "https://$",
