@@ -69,6 +69,10 @@ DEFAULT_SETTINGS_IGNORE_EXTENSIONS = "css,ico,gif,jpg,jpeg,png,bmp,svg,avi,mpg,m
 DEFAULT_SETTINGS_IGNORE_FILES = ""
 # DEFAULT_SETTINGS_IGNORE_EXTENSIONS = ['css','ico','gif','jpg','jpeg','png','bmp','svg','avi','mpg','mpeg','mp3','m3u8','woff','woff2','ttf','eot','mp3','mp4','wav','mpg','mpeg','avi','mov','wmv','doc','xls','pdf','zip','tar','7z','rar','tgz','gz','exe','rtp']
 
+EXTRACTOR_DEFAULT_CONFIG = ""
+EXTRACTOR_DEFAULT_EXCLUDE = ""
+EXTRACTOR_DEFAULT_ENABLED = True
+
 
 
 # Using the Runnable class for thread-safety with Swing
@@ -106,7 +110,19 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
         self.drawSettingsTab()
 
         for k,item in self._settings["extractors"].items():
-            self.addNewTab(item["name"],item["config"],item["exclude"])
+            if not "config" in item:
+                config = EXTRACTOR_DEFAULT_CONFIG
+            else:
+                config = item["config"]
+            if not "exclude" in item:
+                exclude = EXTRACTOR_DEFAULT_EXCLUDE
+            else:
+                exclude = item["exclude"]
+            if not "enabled" in item:
+                enabled = EXTRACTOR_DEFAULT_ENABLED
+            else:
+                enabled = item["enabled"]
+            self.addNewTab(item["name"],config,exclude,enabled)
 
         self.addNewButton()
 
@@ -212,12 +228,12 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
     def focusGained(self, event):
         self.addNewTab()
 
-    def addNewTab(self, name=None, config=None, exclude=None):
+    def addNewTab(self, name=None, config=None, exclude=None, enabled=True):
         self.tabCounter = self.tabCounter + 1
         if name is None:
             name = str(self.tabCounter)
         print("New tab: id="+str(self.tabCounter)+", name="+name)
-        self.extractors[self.tabCounter] = Extractor(self, self.tabCounter, name, config, exclude)
+        self.extractors[self.tabCounter] = Extractor(self, self.tabCounter, name, config, exclude, enabled)
         self.extensionPane.insertTab(name, None, self.extractors[self.tabCounter].mainPane, None, self.tabCounter)
         self.extensionPane.setSelectedIndex(self.tabCounter)
 
@@ -258,6 +274,7 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
             self._settings["extractors"][i] = {}
             # self._settings["extractors"][i]["id"] = self.extractors[i].id
             self._settings["extractors"][i]["name"] = self.extractors[i].name
+            self._settings["extractors"][i]["enabled"] = self.extractors[i].enabled
             self._settings["extractors"][i]["config"] = self.extractors[i].configTextArea.text
             self._settings["extractors"][i]["exclude"] = self.extractors[i].excludeTextArea.text
 
@@ -386,10 +403,11 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
 
 class Extractor():
 
-    def __init__(self, extender, eid, name, config=None, exclude=None):
+    def __init__(self, extender, eid, name, config=None, exclude=None, enabled=True):
         self.extender = extender
         self.id = eid
         self.name = name
+        self.enabled = enabled
         self.config = config
         self._config = []
         self.__config = {}
@@ -433,9 +451,12 @@ class Extractor():
         self.tabNameText.setMaximumSize(dim)
         self.tabNameText.setPreferredSize(dim)
 
+        self.tabEnabledButton = JCheckBox("Enabled")
+        self.tabEnabledButton.setSelected(self.enabled)
+
         self.saveSettingsButton = JButton("Apply changes", actionPerformed=self.saveSettings)
 
-        self.deleteTabButton = JButton("Remove this tab", actionPerformed=self.saveSettings)
+        self.deleteTabButton = JButton("Remove this tab", actionPerformed=self.removeTab)
         self.deleteTabButton.setForeground(Color(255,255,255))
         self.deleteTabButton.setBackground(Color(255,102,52))
 
@@ -468,9 +489,12 @@ class Extractor():
             .addGroup(leftLayout.createParallelGroup()
                     .addGroup(leftLayout.createSequentialGroup()
                         .addComponent(self.configLabel)
-                        .addGap(150)
+                        .addGap(50)
+                        .addComponent(self.tabEnabledButton)
+                        .addGap(50)
                         .addComponent(self.tabNameText)
                         .addComponent(self.saveSettingsButton)
+                        .addGap(50)
                         .addComponent(self.deleteTabButton)
                     )
                     .addComponent(self.configPanel)
@@ -484,6 +508,7 @@ class Extractor():
             .addGroup(leftLayout.createParallelGroup()
                 .addGroup(leftLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(self.configLabel)
+                    .addComponent(self.tabEnabledButton)
                     .addComponent(self.tabNameText)
                     .addComponent(self.saveSettingsButton)
                     .addComponent(self.deleteTabButton)
@@ -531,6 +556,7 @@ class Extractor():
                         .addComponent(self.datasLabel)
                         .addGap(150)
                         .addComponent(self.exportButton)
+                        .addGap(50)
                         .addComponent(self.clearButton)
                     )
                     .addComponent(self.datasPanel)
@@ -556,6 +582,7 @@ class Extractor():
         self.mainPane.setResizeWeight(0.3)
 
     def saveSettings(self, event):
+        self.enabled = self.tabEnabledButton.isSelected()
         self.config = self.configTextArea.text
         self._config = []
         self.__config = {}
@@ -582,6 +609,9 @@ class Extractor():
 
         self.extender.saveSettings(event)
 
+    def removeTab(self, event):
+        return None
+
     def clearDatas(self, event):
         self.datasTextArea.setText("")
 
@@ -593,6 +623,10 @@ class Extractor():
         open(filename, 'w', 0).write(self.datasTextArea.text)
 
     def scan(self, ihrr):
+        if not self.enabled:
+            print(self.name+": disabled.")
+            return False
+
         t_results = []
         t_filtered = []
         t_nodups = []
@@ -608,7 +642,7 @@ class Extractor():
             # print(regexp)
             for m in re.finditer(regexp,decoded_resp):
                 # print(m.group(1))
-                if not m.group(1) is None:
+                if len(m.groups()) > 0 and not m.group(1) is None:
                     t_results.append( m.group(1) )
                     if not k.startswith("*") and not k.startswith("?"):
                         t_keepkeys[m.group(1)] = k
