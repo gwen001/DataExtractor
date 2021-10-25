@@ -53,8 +53,9 @@ do not parse those files (regexp allowed), JSON format: ["jquery.min.js",".png",
 - Custom tab / Config:
 list of regexp to search, JSON format: {"key1":"regexp1","?key2":"regexp2",...}
 if the first character of the key is a '?'or a '*', the key will not be printed in the datas tab
+important: you should have at least 1 group configured (using parenthesis "()") to be able to catch something
 
-- Custom tab / Exclude:
+- Custom tab / Remove from results:
 remove those results from datas tab (regexp allowed), JSON format: ["http://$","application/javacript",...]
 """
 
