@@ -25,7 +25,7 @@ The extension should load and is now ready to perform a passive scan.
 
 # Help
 
-A click on any "Apply changes" button will save all your settings.
+- A single click on any "Apply changes" button will save all your settings
 
 - Settings / Follow scope rules:
 do not parse out of scope urls as defined in the target scope tab
@@ -53,7 +53,23 @@ important: regexps here are case insentitive by design
 
 # Examples
 
-aaaa
+All config textareas should nbe valid JSON format, so take of every single comma and quote.
+As soon as you save your settings, a check is performed so you can ensure that everything is fine in the output/errors tab of the exender tab.
+
+Subdomains:
+```
+{
+"?bbb":"(?i)(([0-9a-z_\\-\\.]+)\\.github\\.com)"
+}
+```
+
+AWS keys ans Slack tokens
+{
+"slack token": "(xox[pboa]-[0-9]{10,12}-[0-9]{10,12}(-[0-9]{10,12})?-[a-zA-Z0-9]{24,32})",
+"aws key": "((AKIA|A3T|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{12,})" // <- no comma here
+}
+
+See the file `myregexp` to get all my regexps.
 
 
 # Screenshots

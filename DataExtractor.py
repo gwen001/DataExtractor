@@ -36,7 +36,7 @@ from javax.swing import JSplitPane
 from javax.swing import GroupLayout
 
 
-EXTENSION_HELP = """A click on any "Apply changes" button will save all your settings.
+EXTENSION_HELP = """- A single click on any "Apply changes" button will save all your settings
 
 - Settings / Follow scope rules:
 do not parse out of scope urls as defined in the target scope tab
