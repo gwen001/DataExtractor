@@ -51,28 +51,42 @@ group(1) is used as a result so to ignore a group, please use "?:" as a prefix o
 remove those results from datas tab (regexps allowed), JSON format: ["http://$","application/javacript",...]
 important: regexps here are case insentitive by design
 
-# Examples
+# Examples of regexps config
 
-All config textareas should nbe valid JSON format, so take of every single comma and quote.
-As soon as you save your settings, a check is performed so you can ensure that everything is fine in the output/errors tab of the exender tab.
+All config textareas should be valid JSON format associative arrays (key/value), so take of every single comma and quote.
+As soon as you save your settings, a check is performed so you can ensure that everything is fine in the output/errors tab of the exender tab.  
+Note that all keys should be different.
 
-Subdomains:
+Subdomains (case insensitive):
 ```
 {
-"?bbb":"(?i)(([0-9a-z_\\-\\.]+)\\.github\\.com)"
+"*dummykey1":"(?i)(([0-9a-z_\\-\\.]+)\\.github\\.com)"
 }
 ```
 
-AWS keys ans Slack tokens
+AWS keys ans Slack tokens (case sensitive):
 ```
 {
 "slack token": "(xox[pboa]-[0-9]{10,12}-[0-9]{10,12}(-[0-9]{10,12})?-[a-zA-Z0-9]{24,32})",
-"aws key": "((AKIA|A3T|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{12,})" // <- no comma here
+"aws key": "((AKIA|A3T|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{12,})"
 }
 ```
 
 See the file `myregexp` to get all my regexps.
 
+# Examples of ignore/remove config
+
+All config textareas should be valid JSON format arrays, so take of every single comma and quote.
+As soon as you save your settings, a check is performed so you can ensure that everything is fine in the output/errors tab of the exender tab.  
+
+```
+[
+".png$",
+"application/javascript",
+"googleapis.com",
+"sha256.*$"
+]
+```
 
 # Screenshots
 
