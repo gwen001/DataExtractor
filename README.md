@@ -37,18 +37,18 @@ remove duplicates from datas tabs
 do not parse urls with those extensions
 
 - Settings / Ignore files:
-do not parse those files (regexps allowed), JSON format: ["jquery.min.js",".png",...]
+do not parse those files (regexps allowed), JSON format: ["jquery.min.js",".png",...]  
 important: regexps here are case insentitive by design
 
 - Custom tab / Config:
-list of regexps to search, JSON format: {"key1":"regexp1","?key2":"regexp2",...}
-if the first character of the key is a '?'or a '*', the key will not be printed in the datas tab
-important: regexps here are NOT case sentitive, use "(?i)" as a prefix of the whole regexp to make it insentitive
-important: you should have at least 1 group configured using parenthesis "()" to be able to catch something,
+list of regexps to search, JSON format: {"key1":"regexp1","?key2":"regexp2",...}  
+if the first character of the key is a '?'or a '*', the key will not be printed in the datas tab  
+important: regexps here are NOT case sentitive, use "(?i)" as a prefix of the whole regexp to make it insentitive  
+important: you should have at least 1 group configured using parenthesis "()" to be able to catch something,  
 group(1) is used as a result so to ignore a group, please use "?:" as a prefix of the group itself
 
 - Custom tab / Remove from results:
-remove those results from datas tab (regexps allowed), JSON format: ["http://$","application/javacript",...]
+remove those results from datas tab (regexps allowed), JSON format: ["http://$","application/javacript",...]  
 important: regexps here are case insentitive by design
 
 # Examples of regexp config
