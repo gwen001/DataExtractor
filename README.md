@@ -72,7 +72,7 @@ AWS keys ans Slack tokens (case sensitive):
 }
 ```
 
-See the file `myregexp` to get all my regexps.
+See the file [myregexp](https://github.com/gwen001/DataExtractor/blob/main/myregexp) to get all my regexps.
 
 # Example of ignore/remove
 

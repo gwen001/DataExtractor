@@ -78,7 +78,7 @@ KEYS
 
 {
 "s3 bucket": "([a-z0-9\\._-]*s3[a-z0-9\\.-]*\\.amazonaws\\.com[\\\\]?/?([a-z0-9\\._-]+)?)",
-"slack token": "(xox[pboa]-[0-9]{10,12}-[0-9]{10,12}(-[0-9]{10,12})?-[a-zA-Z0-9]{24,32})",
+"slack token": "(xox[pboa](-[0-9]{8,15}){2,3}-[a-zA-Z0-9]{24,32})",
 "noidea1": "(T[a-zA-Z0-9_]{8}[\\\\]?/B[a-zA-Z0-9_]{8}[\\\\]?/[a-zA-Z0-9_]{24})",
 "aws key": "((AKIA|A3T|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{12,})",
 "stripe key": "([psr]k_live_[0-9a-zA-Z]{24,34})",
