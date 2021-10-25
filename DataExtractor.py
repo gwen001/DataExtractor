@@ -11,6 +11,8 @@ import re
 import json
 import base64
 import binascii
+import string
+import random
 from urlparse import *
 
 from burp import IBurpExtender, IScannerCheck, ITab
@@ -90,6 +92,7 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
         self._helpers = callbacks.getHelpers()
         self._callbacks.setExtensionName("DataExtractor")
 
+        # self.resetSettings(None)
         self.initSettings()
 
         self._callbacks.registerScannerCheck(self)
@@ -110,19 +113,27 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
         self.drawSettingsTab()
 
         for k,item in self._settings["extractors"].items():
-            if not "config" in item:
-                config = EXTRACTOR_DEFAULT_CONFIG
+            if "id" in item:
+                eid = item["id"]
             else:
+                eid = None
+            if "name" in item:
+                name = item["name"]
+            else:
+                name = None
+            if "config" in item:
                 config = item["config"]
-            if not "exclude" in item:
-                exclude = EXTRACTOR_DEFAULT_EXCLUDE
             else:
+                config = EXTRACTOR_DEFAULT_CONFIG
+            if "exclude" in item:
                 exclude = item["exclude"]
-            if not "enabled" in item:
-                enabled = EXTRACTOR_DEFAULT_ENABLED
             else:
+                exclude = EXTRACTOR_DEFAULT_EXCLUDE
+            if "enabled" in item:
                 enabled = item["enabled"]
-            self.addNewTab(item["name"],config,exclude,enabled)
+            else:
+                enabled = EXTRACTOR_DEFAULT_ENABLED
+            self.addNewTab(eid,name,config,exclude,enabled)
 
         self.addNewButton()
 
@@ -227,15 +238,57 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
 
     def focusGained(self, event):
         self.addNewTab()
+        self.saveSettings(None)
 
-    def addNewTab(self, name=None, config=None, exclude=None, enabled=True):
-        self.tabCounter = self.tabCounter + 1
+    def generateExtractorId(self, size=10, chars=string.ascii_lowercase + string.digits):
+        return ''.join(random.choice(chars) for _ in range(size))
+
+    def addNewTab(self, eid=None, name=None, config=None, exclude=None, enabled=True):
+        tabCounter = len(self.extractors) + 1
+        if eid is None:
+            eid = self.generateExtractorId()
         if name is None:
-            name = str(self.tabCounter)
-        print("New tab: id="+str(self.tabCounter)+", name="+name)
-        self.extractors[self.tabCounter] = Extractor(self, self.tabCounter, name, config, exclude, enabled)
-        self.extensionPane.insertTab(name, None, self.extractors[self.tabCounter].mainPane, None, self.tabCounter)
-        self.extensionPane.setSelectedIndex(self.tabCounter)
+            name = str(tabCounter)
+        print("New tab: id="+eid+", name="+name)
+        self.extractors[tabCounter] = Extractor(self, eid, name, config, exclude, enabled)
+        self.extensionPane.insertTab(name, None, self.extractors[tabCounter].mainPane, None, tabCounter)
+        self.extensionPane.setSelectedIndex(tabCounter)
+
+    def getTabIndexFromId(self, tabid):
+        for i in range(1,len(self.extractors)+1):
+            if self.extractors[i].eid == tabid:
+                return i
+
+    def removeTab( self, tabid ):
+        tabIndex = self.getTabIndexFromId( tabid )
+        print("Remove tab: "+self.extractors[tabIndex].name+" ("+str(tabid)+").")
+
+        self.extensionPane.removeTabAt( tabIndex )
+        if tabIndex == len(self.extractors):
+            newFocusedTab = tabIndex - 1
+        else:
+            newFocusedTab = tabIndex
+        self.extensionPane.setSelectedIndex( newFocusedTab )
+
+        # print(len(self.extractors))
+        # for i in range(1,len(self.extractors)+1):
+        #     print(str(i)+"="+self.extractors[i].name)
+        # print("-------")
+
+        j = 1
+        tmp = {}
+        for i in range(1,len(self.extractors)+1):
+            if not self.extractors[i].eid == tabid:
+                tmp[j] = self.extractors[i]
+                j = j + 1
+        self.extractors = tmp
+
+        # print("-------")
+        # print(len(self.extractors))
+        # for i in range(1,len(self.extractors)+1):
+        #     print(str(i)+"="+self.extractors[i].name)
+
+        self.saveSettings(None)
 
     def initSettings(self):
         self._settings = {}
@@ -269,10 +322,9 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
 
         for i in range(1,len(self.extractors)+1):
             self.extensionPane.setTitleAt(i,self.extractors[i].tabNameText.text)
-            self.extractors[i].name = self.extractors[i].tabNameText.text
-            # self.extractors[i].mainPane.setName( self.extractors[i].tabNameText.text )
+            self.extractors[i].saveSettings(None, False)
             self._settings["extractors"][i] = {}
-            # self._settings["extractors"][i]["id"] = self.extractors[i].id
+            self._settings["extractors"][i]["id"] = self.extractors[i].eid
             self._settings["extractors"][i]["name"] = self.extractors[i].name
             self._settings["extractors"][i]["enabled"] = self.extractors[i].enabled
             self._settings["extractors"][i]["config"] = self.extractors[i].configTextArea.text
@@ -405,7 +457,7 @@ class Extractor():
 
     def __init__(self, extender, eid, name, config=None, exclude=None, enabled=True):
         self.extender = extender
-        self.id = eid
+        self.eid = eid
         self.name = name
         self.enabled = enabled
         self.config = config
@@ -467,7 +519,7 @@ class Extractor():
         self.configPanel = JScrollPane()
         self.configPanel.setViewportView(self.configTextArea)
 
-        self.excludeLabel = JLabel("Exclude:")
+        self.excludeLabel = JLabel("Remove from results:")
         self.excludeLabel.setFont(Font("Tahoma", Font.BOLD, 14))
         self.excludeLabel.setForeground(Color(255,102,52))
 
@@ -581,7 +633,8 @@ class Extractor():
         self.mainPane.setRightComponent(self.rightPane)
         self.mainPane.setResizeWeight(0.3)
 
-    def saveSettings(self, event):
+    def saveSettings(self, event, extenderSave=True):
+        self.name = self.tabNameText.text
         self.enabled = self.tabEnabledButton.isSelected()
         self.config = self.configTextArea.text
         self._config = []
@@ -607,9 +660,11 @@ class Extractor():
             except ValueError as e:
                 print("Invalid JSON format! ("+self.name+":exclude)")
 
-        self.extender.saveSettings(event)
+        if extenderSave:
+            self.extender.saveSettings(event)
 
     def removeTab(self, event):
+        self.extender.removeTab(self.eid)
         return None
 
     def clearDatas(self, event):
