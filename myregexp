@@ -131,7 +131,7 @@ KEYS V2 CI
 "mailgun key": "(key-[0-9a-zA-Z]{32})",
 "square app scret": "(sq0(atp|csp)-[0-9A-Za-z_-]{22,43})",
 "square personal token": "(EAAA[0-9a-zA-Z_-]{60})",
-"paypal token": "(?i)(access_token\\$(live|production|sandbox)\\$[0-9a-z]{16}\\$[0-9a-f]{32})",
+"paypal token": "(access_token\\$(live|production|sandbox)\\$[0-9a-z]{16}\\$[0-9a-f]{32})",
 "noidea2": "([^0-9a-zA-Z_-][AE][0-9a-zA-Z_-]{79})",
 "noidea3": "(A21AA[0-9a-zA-Z_-]{92})",
 "facebook secret": "(?i)(facebook.{0,20}[ '\"=:\\(\\[{]+.{0,5}[0-9a-f]{32})",
