@@ -51,7 +51,7 @@ group(1) is used as a result so to ignore a group, please use "?:" as a prefix o
 remove those results from datas tab (regexps allowed), JSON format: ["http://$","application/javacript",...]
 important: regexps here are case insentitive by design
 
-# Examples of regexps config
+# Examples of tabs config
 
 All config textareas should be valid JSON format associative arrays (key/value), so take of every single comma and quote.
 As soon as you save your settings, a check is performed so you can ensure that everything is fine in the output/errors tab of the exender tab.  
@@ -74,9 +74,9 @@ AWS keys ans Slack tokens (case sensitive):
 
 See the file `myregexp` to get all my regexps.
 
-# Examples of ignore/remove config
+# Examples of ignore/remove
 
-All config textareas should be valid JSON format arrays, so take of every single comma and quote.
+All ignore/remove textareas should be valid JSON format arrays, so take of every single comma and quote.
 As soon as you save your settings, a check is performed so you can ensure that everything is fine in the output/errors tab of the exender tab.  
 
 ```
