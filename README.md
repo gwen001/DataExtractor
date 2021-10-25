@@ -53,7 +53,7 @@ important: regexps here are case insentitive by design
 
 # Examples of tabs config
 
-All config textareas should be valid JSON format associative arrays (key/value), so take of every single comma and quote.
+All config textareas should be valid JSON format associative arrays (key/value), so take care of every single comma and quote.
 As soon as you save your settings, a check is performed so you can ensure that everything is fine in the output/errors tab of the exender tab.  
 Note that all keys should be different.
 
@@ -76,7 +76,7 @@ See the file `myregexp` to get all my regexps.
 
 # Examples of ignore/remove
 
-All ignore/remove textareas should be valid JSON format arrays, so take of every single comma and quote.
+All ignore/remove textareas should be valid JSON format arrays, so take care of every single comma and quote.
 As soon as you save your settings, a check is performed so you can ensure that everything is fine in the output/errors tab of the exender tab.  
 
 ```
