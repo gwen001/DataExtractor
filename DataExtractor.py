@@ -71,6 +71,7 @@ https://github.com/gwen001/DataExtractor
 
 EXTENSION_SETTINGS_KEY = "DataExtractorSettings"
 DEFAULT_SETTINGS_REMOVE_DUPLICATES = True
+DEFAULT_SETTINGS_VERBOSE_MODE = False
 DEFAULT_SETTINGS_SCOPE_ONLY = True
 DEFAULT_SETTINGS_IGNORE_EXTENSIONS = "css,ico,gif,jpg,jpeg,png,bmp,svg,avi,mpg,mpeg,mp3,m3u8,woff,woff2,ttf,eot,mp3,mp4,wav,mpg,mpeg,avi,mov,wmv,doc,xls,pdf,zip,tar,7z,rar,tgz,gz,exe,rtp"
 DEFAULT_SETTINGS_IGNORE_FILES = ""
@@ -82,6 +83,16 @@ EXTRACTOR_DEFAULT_ENABLED = True
 
 
 
+globalVerboseMode = DEFAULT_SETTINGS_VERBOSE_MODE
+
+class _print:
+    def __init__(self, txt):
+        global globalVerboseMode
+        if globalVerboseMode:
+            print(txt)
+
+
+
 # Using the Runnable class for thread-safety with Swing
 class Run(Runnable):
     def __init__(self, runner):
@@ -89,6 +100,7 @@ class Run(Runnable):
 
     def run(self):
         self.runner()
+
 
 
 class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
@@ -179,22 +191,27 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
         self.settingsIgnoreFilesPane.setBounds(10, 155, 550, 250)
         self.settingsPane.add( self.settingsIgnoreFilesPane )
 
+        self.settingsVerboseModeOptionButton = JCheckBox("Verbose mode (for debugging purpose)")
+        self.settingsVerboseModeOptionButton.setSelected(self._settings["verboseMode"])
+        self.settingsVerboseModeOptionButton.setBounds(10, 420, 250, 30)
+        self.settingsPane.add( self.settingsVerboseModeOptionButton )
+
         self.settingsSaveButton = JButton("Apply changes", actionPerformed=self.saveSettings)
-        self.settingsSaveButton.setBounds(10, 440, 150, 30)
+        self.settingsSaveButton.setBounds(10, 500, 150, 30)
         self.settingsPane.add( self.settingsSaveButton )
 
         self.settingsResetButton = JButton("Reset extension", actionPerformed=self.resetSettings)
-        self.settingsResetButton.setBounds(200, 440, 150, 30)
+        self.settingsResetButton.setBounds(200, 500, 150, 30)
         self.settingsResetButton.setForeground(Color(255,255,255))
         self.settingsResetButton.setBackground(Color(255,102,52))
         self.settingsPane.add( self.settingsResetButton )
 
         resetWarning1 = JLabel("Warning: you're gonna lose all your datas.")
-        resetWarning1.setBounds(200, 465, 350, 30)
+        resetWarning1.setBounds(200, 525, 350, 30)
         self.settingsPane.add( resetWarning1 )
 
         resetWarning2 = JLabel("Extension reload required.")
-        resetWarning2.setBounds(200, 480, 350, 30)
+        resetWarning2.setBounds(200, 540, 350, 30)
         self.settingsPane.add( resetWarning2 )
 
         self.helpAboutPane = JPanel()
@@ -275,10 +292,10 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
             newFocusedTab = tabIndex
         self.extensionPane.setSelectedIndex( newFocusedTab )
 
-        # print(len(self.extractors))
+        # _print(len(self.extractors))
         # for i in range(1,len(self.extractors)+1):
-        #     print(str(i)+"="+self.extractors[i].name)
-        # print("-------")
+        #     _print(str(i)+"="+self.extractors[i].name)
+        # _print("-------")
 
         j = 1
         tmp = {}
@@ -288,16 +305,17 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
                 j = j + 1
         self.extractors = tmp
 
-        # print("-------")
-        # print(len(self.extractors))
+        # _print(len(self.extractors))
         # for i in range(1,len(self.extractors)+1):
-        #     print(str(i)+"="+self.extractors[i].name)
+        #     _print(str(i)+"="+self.extractors[i].name)
+        # _print("-------")
 
         self.saveSettings(None)
 
     def initSettings(self):
         self._settings = {}
         self._settings["extractors"] = {}
+        self._settings["verboseMode"] = DEFAULT_SETTINGS_VERBOSE_MODE
         self._settings["scopeOnly"] = DEFAULT_SETTINGS_SCOPE_ONLY
         self._settings["removeDuplicates"] = DEFAULT_SETTINGS_REMOVE_DUPLICATES
         self._settings["ignoreExtensions"] = DEFAULT_SETTINGS_IGNORE_EXTENSIONS
@@ -311,6 +329,7 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
         self.postLoadSettings()
 
     def saveSettings(self, event):
+        self._settings["verboseMode"] = self.settingsVerboseModeOptionButton.isSelected()
         self._settings["scopeOnly"] = self.settingsScopeOptionButton.isSelected()
         self._settings["removeDuplicates"] = self.settingsRemoveDuplicatesButton.isSelected()
         self._settings["ignoreExtensions"] = self.settingsIgnoreExtensionsText.text
@@ -336,6 +355,7 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
             self._settings["extractors"][i]["exclude"] = self.extractors[i].excludeTextArea.text
 
         to_save = {}
+        to_save["verboseMode"] = self._settings["verboseMode"]
         to_save["scopeOnly"] = self._settings["scopeOnly"]
         to_save["removeDuplicates"] = self._settings["removeDuplicates"]
         to_save["ignoreExtensions"] = self._settings["ignoreExtensions"]
@@ -343,7 +363,7 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
         to_save["extractors"] = self._settings["extractors"]
 
         self._callbacks.saveExtensionSetting(EXTENSION_SETTINGS_KEY,json.dumps(to_save))
-        print(to_save)
+        _print(to_save)
         print("Settings saved.")
         self.postLoadSettings()
 
@@ -352,6 +372,7 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
 
         if settings:
             print("Previous settings found.")
+            print(settings)
             try:
                 settings = json.loads(settings)
                 print("Settings loaded.")
@@ -362,6 +383,8 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
             settings = {}
             print("No settings found.")
 
+        if "verboseMode" in settings:
+            self._settings["verboseMode"] = settings["verboseMode"]
         if "scopeOnly" in settings:
             self._settings["scopeOnly"] = settings["scopeOnly"]
         if "removeDuplicates" in settings:
@@ -376,10 +399,12 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
         self.postLoadSettings()
 
     def postLoadSettings(self):
+        global globalVerboseMode
+        globalVerboseMode = self._settings["verboseMode"]
+
         self._settings["_ignoreExtensions"] = []
         for ext in self._settings["ignoreExtensions"].split(","):
             self._settings["_ignoreExtensions"].append("."+ext)
-        # print(self._settings["_ignoreExtensions"])
 
         self._settings["_ignoreFiles"] = []
         self._settings["__ignoreFiles"] = []
@@ -397,8 +422,8 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
             requestURL = ihrr.getUrl()
             stringURL = str(requestURL)
             t_url = urlparse(stringURL)
-            print("Scanning: "+stringURL)
-            # print(t_url.path)
+            _print("Scanning: "+stringURL)
+            # _print(t_url.path)
 
             if not self.checkScope(requestURL):
                 return None
@@ -407,41 +432,41 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
             if not self.checkFile(stringURL):
                 return None
 
-            print("Grepping: "+stringURL)
+            _print("Grepping: "+stringURL)
 
             for i in range(1,len(self.extractors)+1):
                 self.extractors[i].scan(ihrr)
         except UnicodeEncodeError:
-            print("Error in URL decode.")
+            _print("Error in URL decode.")
 
         return None
 
     def checkFile(self, url):
         for regexp in self._settings["__ignoreFiles"]:
             if re.search(regexp,url):
-                print("File ignored: "+url)
+                _print("File ignored: "+url)
                 return False
 
-        print("File not ignored: "+url)
+        _print("File not ignored: "+url)
         return True
 
     def checkScope(self, url):
-        print("scope check: "+str(url))
+        _print("scope check: "+str(url))
         if self._settings["scopeOnly"] and not(self._callbacks.isInScope(url)):
-            print("OOS: "+str(url))
+            _print("OOS: "+str(url))
             return False
 
-        print("Scope OK: "+str(url))
+        _print("Scope OK: "+str(url))
         return True
 
     def checkExtension(self, path):
-        print("extension check: "+path)
+        _print("extension check: "+path)
         for ext in self._settings["_ignoreExtensions"]:
             if path.endswith(ext):
-                print("Extension ignored: "+path)
+                _print("Extension ignored: "+path)
                 return False
 
-        print("Extension OK: "+path)
+        _print("Extension OK: "+path)
         return True
 
     def getTabCaption(self):
@@ -456,6 +481,7 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
     def extensionUnloaded(self):
         print("DataExtractor unloaded.")
         return
+
 
 
 class Extractor():
@@ -595,7 +621,7 @@ class Extractor():
 
         self.datasTextArea = JTextArea("")
         self.datasTextArea.setFont(Font("Consolas", Font.PLAIN, 12))
-        self.datasTextArea.setEditable(False)
+        self.datasTextArea.setEditable(True)
         self.datasTextArea.setLineWrap(True)
 
         self.datasPanel = JScrollPane()
@@ -686,7 +712,7 @@ class Extractor():
 
     def scan(self, ihrr):
         if not self.enabled:
-            print(self.name+": disabled.")
+            _print(self.name+": disabled.")
             return False
 
         t_results = []
@@ -697,22 +723,21 @@ class Extractor():
         t_keepkeys = {}
         encoded_resp = binascii.b2a_base64(ihrr.getResponse())
         decoded_resp = base64.b64decode(encoded_resp)
-        # print(len(encoded_resp))
-        # print(len(decoded_resp))
+        # _print(len(encoded_resp))
+        # _print(len(decoded_resp))
 
         for k,regexp in self.__config.items():
-            # print(regexp)
+            # _print(regexp)
             for m in re.finditer(regexp,decoded_resp):
-                # print(m.group(1))
-                for i in range(0,len(m.groups())+1):
-                    if not m.group(i) is None:
-                        print(str(i)+":"+m.group(i))
+                # for i in range(0,len(m.groups())+1):
+                #     if not m.group(i) is None:
+                #         _print(str(i)+":"+m.group(i))
                 if len(m.groups()) > 0 and not m.group(1) is None:
                     t_results.append( m.group(1) )
                     if not k.startswith("*") and not k.startswith("?"):
                         t_keepkeys[m.group(1)] = k
 
-        print(self.name+": "+str(len(t_results))+" results.")
+        _print(self.name+": "+str(len(t_results))+" results.")
 
         for r in t_results:
             exclude_flag = False
@@ -722,7 +747,7 @@ class Extractor():
             if not exclude_flag:
                 t_filtered.append( r )
 
-        print(self.name+": "+str(len(t_filtered))+" filtered ("+str(len(t_results)-len(t_filtered))+" removed).")
+        _print(self.name+": "+str(len(t_filtered))+" filtered ("+str(len(t_results)-len(t_filtered))+" removed).")
 
         if len(t_filtered):
             for r in t_filtered:
@@ -740,12 +765,12 @@ class Extractor():
                     if not r in t_currentdatas and not r in t_nodups:
                         t_nodups.append( r )
 
-                print(self.name+": "+str(len(t_nodups))+" undups ("+str(len(t_output)-len(t_nodups))+" removed).")
+                _print(self.name+": "+str(len(t_nodups))+" undups ("+str(len(t_output)-len(t_nodups))+" removed).")
                 t_final = t_nodups
             else:
                 t_final = t_output
 
-        print(self.name+": "+str(len(t_final))+" final.")
+        _print(self.name+": "+str(len(t_final))+" final.")
 
         if len(t_final):
             for r in t_final:

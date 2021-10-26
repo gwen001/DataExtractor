@@ -70,7 +70,8 @@ ignore:
 "sha256.*$",
 "sha512.*$",
 "docs.aws.amazon.com",
-"apple.com"
+"apple.com",
+"data:.*"
 ]
 
 
