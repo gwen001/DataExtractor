@@ -9,7 +9,7 @@ A simple Burp Suite extension to extract datas from source code.
 - files exclusion based on regexp  
 - multi tabs for multiple purpose  
 - datas extraction based on regexp  
-- datas exclusion based on regexp  
+- results exclusion based on regexp  
 - datas export  
 
 # Install
