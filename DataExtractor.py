@@ -47,6 +47,7 @@ remove duplicates from datas tabs
 - Settings / Ignore extensions:
 do not parse urls with those extensions
 
+
 - Settings / Ignore files:
 do not parse those files (regexps allowed), JSON format: ["jquery.min.js",".png",...]
 important: regexps here are case insentitive by design
@@ -261,6 +262,9 @@ class BurpExtender(IBurpExtender, IScannerCheck, ITab, FocusListener):
     def focusGained(self, event):
         self.addNewTab()
         self.saveSettings(None)
+
+    def focusLost(self, event):
+        return None
 
     def generateExtractorId(self, size=10, chars=string.ascii_lowercase + string.digits):
         return ''.join(random.choice(chars) for _ in range(size))
