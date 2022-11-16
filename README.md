@@ -1,6 +1,6 @@
 <h1 align="center">DataExtractor</h1>
 
-<h4 align="center">A simple Burp Suite extension to extract data from source code.  </h4>
+<h4 align="center">A simple Burp Suite extension to extract data from source code.</h4>
 
 <p align="center">
     <img src="https://img.shields.io/badge/python-v3-blue" alt="python badge">
